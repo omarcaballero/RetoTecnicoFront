@@ -1,0 +1,248 @@
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.cardWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+}
+
+.glowEffect {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  border-radius: 24px;
+  filter: blur(20px);
+  opacity: 0.6;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.card {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  font-size: 15px;
+  margin-bottom: 35px;
+}
+
+.inputGroup {
+  margin-bottom: 24px;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.iconLeft {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 14px 14px 45px;
+  font-size: 15px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.input:focus {
+  border: 2px solid #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.inputWithIcon {
+  padding-right: 45px;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eyeButton:disabled {
+  cursor: not-allowed;
+}
+
+.errorBox {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.errorText {
+  color: #dc2626;
+  font-size: 14px;
+  margin: 0;
+}
+
+.lockBox {
+  background-color: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.lockTitle {
+  color: #92400e;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.lockTime {
+  color: #b45309;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0;
+  font-family: monospace;
+}
+
+.lockMessage {
+  color: #78350f;
+  font-size: 13px;
+  margin: 4px 0 0 0;
+}
+
+.button {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  font-family: inherit;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  animation: spin 1s linear infinite;
+}
+
+.footer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.link {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #7c3aed;
+}
