@@ -9,81 +9,57 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  const [isLocked, setIsLocked] = useState(false);
-  const [lockTimeRemaining, setLockTimeRemaining] = useState(0);
-
-  const MAX_ATTEMPTS = 3;
-  const LOCK_DURATION = 300;
-
-  useEffect(() => {
-    const lockEndTime = localStorage.getItem('loginLockEndTime');
-    if (lockEndTime) {
-      const remainingTime = Math.floor((parseInt(lockEndTime) - Date.now()) / 1000);
-      if (remainingTime > 0) {
-        setIsLocked(true);
-        setLockTimeRemaining(remainingTime);
-      } else {
-        localStorage.removeItem('loginLockEndTime');
-        localStorage.removeItem('failedLoginAttempts');
-      }
-    }
-
-    const savedAttempts = localStorage.getItem('failedLoginAttempts');
-    if (savedAttempts) {
-      setFailedAttempts(parseInt(savedAttempts));
-    }
-  }, []);
+  const [lockInfo, setLockInfo] = useState(null);
 
   useEffect(() => {
     let interval;
-    if (isLocked && lockTimeRemaining > 0) {
+    if (lockInfo && lockInfo.remainingTime > 0) {
       interval = setInterval(() => {
-        setLockTimeRemaining((prev) => {
-          if (prev <= 1) {
-            setIsLocked(false);
-            setFailedAttempts(0);
-            localStorage.removeItem('loginLockEndTime');
-            localStorage.removeItem('failedLoginAttempts');
-            return 0;
+        setLockInfo(prev => {
+          if (!prev || prev.remainingTime <= 1) {
+            return null;
           }
-          return prev - 1;
+          return {
+            ...prev,
+            remainingTime: prev.remainingTime - 1
+          };
         });
       }, 1000);
     }
-    return () => clearInterval(interval);
-  }, [isLocked, lockTimeRemaining]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [lockInfo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (isLocked) return;
 
     setError('');
     setLoading(true);
 
     try {
-      const tokens = await login(username, password);
-      localStorage.setItem('accessToken', tokens.accessToken);
+      const response = await login(username, password);
       
-      setFailedAttempts(0);
-      localStorage.removeItem('failedLoginAttempts');
-      localStorage.removeItem('loginLockEndTime');
-      
-      alert('¡Inicio de sesión exitoso! Token guardado.');
+      if (response.accessToken) {
+        localStorage.setItem('accessToken', response.accessToken);
+        setLockInfo(null);
+        setError('');
+        alert('¡Inicio de sesión exitoso! Token guardado.');
+      }
     } catch (err) {
-      const newFailedAttempts = failedAttempts + 1;
-      setFailedAttempts(newFailedAttempts);
-      localStorage.setItem('failedLoginAttempts', newFailedAttempts.toString());
-
-      if (newFailedAttempts >= MAX_ATTEMPTS) {
-        const lockEndTime = Date.now() + (LOCK_DURATION * 1000);
-        localStorage.setItem('loginLockEndTime', lockEndTime.toString());
-        setIsLocked(true);
-        setLockTimeRemaining(LOCK_DURATION);
-        setError(`Demasiados intentos fallidos. Cuenta bloqueada por ${LOCK_DURATION / 60} minutos.`);
+        console.log(err);
+      if (err.remainingTime !== undefined && err.remainingTime > 0) {
+        setLockInfo({
+          message: err.message,
+          remainingTime: err.remainingTime,
+          timestamp: Date.now()
+        });
+        setError('');
       } else {
-        setError(`${err.message} (${newFailedAttempts}/${MAX_ATTEMPTS} intentos)`);
+        setError(err.message);
+        if (err.remainingTime === 0 || err.remainingTime === undefined) {
+          setLockInfo(null);
+        }
       }
     } finally {
       setLoading(false);
@@ -95,6 +71,8 @@ const Login = () => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  const isLocked = lockInfo && lockInfo.remainingTime > 0;
 
   return (
     <div className={styles.container}>
@@ -116,7 +94,7 @@ const Login = () => {
           <div>
             {isLocked && (
               <LockWarning 
-                timeRemaining={lockTimeRemaining} 
+                timeRemaining={lockInfo.remainingTime} 
                 formatTime={formatTime} 
               />
             )}
